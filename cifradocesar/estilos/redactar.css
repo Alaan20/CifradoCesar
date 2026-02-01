@@ -1,0 +1,24 @@
+body {
+	margin: auto;
+	text-align: center;
+}
+
+#inp_texto_mensaje {
+	width: 240px;
+	height: 100px;
+	resize: none;
+	min-width: 240px;
+	max-width: 300px;
+	min-height: 80px;
+	max-height: 80px;
+}
+
+div {
+	border: solid black;
+	width: 400px;
+	max-width: 400px;
+	min-width: 400px;
+	height: 430px;
+	max-height: 430px;
+	min-height: 430px;
+}
