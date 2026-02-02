@@ -1,7 +1,7 @@
 <?php
 class Usuario {
 
-	private conexion;
+	private $conexion;
 
 	function __construct () {
 		$this->conexion = new mysqli("localhost","root","","cifradocesar") or die ("Error al realizar la conexion a la base de datos");

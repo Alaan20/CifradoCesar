@@ -1,4 +1,7 @@
 <?php
+
+	//esto se encuentra en la mayoria de paginas para evitar que usuarios no registrados ingresen al sistema, en caso de que no se detecte una sección, te redirige al login (o Iniciar Sesion)
+
 	session_start();
 	if (!isset($_SESSION['nombre_usuario']) ) {
 		header('location: login.php');
@@ -12,69 +15,49 @@
 	<title>Pagina Principal</title>
 	<link rel="stylesheet" type="text/css" href="estilos/estilos_pagina_principal.css">
 	<script type="module" src=".\javascript\pagina_principal.js"></script>
-	<script>
-		function cerrar_y_limpiar_modal () {
-			let lbl_asunto = document.getElementById("id_lbl_asunto")
-			let lbl_mensaje = document.getElementById("id_lbl_mensaje")
-			let lbl_fecha = document.getElementById("id_lbl_fecha")
-			let lbl_remitente = document.getElementById("id_lbl_remitente")
-			let div_oculto_mensaje_previo = document.getElementById("id_div_msj_anterior") 	
-			
-			lbl_asunto.innerHTML = ''
-			lbl_mensaje.innerHTML = ''
-			lbl_fecha.innerHTML = ''
-			lbl_remitente.innerHTML = ''
-			div_oculto_mensaje_previo.hidden = true
-
-			let dialog = document.getElementById('dialog_mensaje')
-			dialog.close()
-		}
-
-		function cerrar_modal(){
-			let dialog_bienvenida = document.getElementById("dialog_bienvenida")
-			dialog_bienvenida.close()
-		}
-
-		function ocultar_seccion() {
-			div = document.getElementById("id_div_rta")
-			div.hidden = true
-		}
-
-		function mostrar_seccion_rta(){
-			div = document.getElementById("id_div_rta")
-			div.hidden = false
-		}
-
-		function ocultar_mensaje_previo() {
-			let div_oculto_mensaje_previo = document.getElementById("id_div_msj_anterior") 	
-			div_oculto_mensaje_previo.hidden = true
-		}
-
-	</script>
 </head>
 <body>
-	<dialog id="dialog_bienvenida">
-		<h2>Bienvenido/a 	<?php   echo '  '.$_SESSION['nombre_usuario']; ?>  </h2>
+	
+	<!-- Este dialog se abre solamente despues del login, indica la fecha y hora de la ultima vez que se conectó el usuario y los mensajes recibidos desde esa fecha hasta la actual -->
 
-		<span>Recibiste:
-			<?php
-				include_once('../cifradocesar/clases/Mensaje.class.php');
-				$mensaje_obj = new Mensaje();
-				$elemento = $mensaje_obj->obtengo_mensajes_recibidos_desde_ultima_vez($_SESSION['id_usuario_actual']);
-				echo $elemento->cuenta." mensajes desde la ultima vez.";
+	<?php
+		if ($_SESSION['muestro_bienvenida'] == 'verdadero') {
+			
+			echo '<input type="text" hidden id="id_muestro_bienvenida" value="'.$_SESSION['muestro_bienvenida'].'">';
+			$_SESSION['muestro_bienvenida'] = 'falso';
 
-				include_once('../cifradocesar/clases/Usuario.class.php');
-				$usuario_obj = new Usuario();
-				$res = $usuario_obj->consultar_ultima_fecha_hora();
-				echo '<br>Ultima fecha de acceso: '.$res;
-			?>
-		</span>
-		<br><br>
-		<button onclick="cerrar_modal()">OK</button>
-	</dialog>
+		} else {
+			echo '<input type="text" hidden id="id_muestro_bienvenida" value="'.$_SESSION['muestro_bienvenida'].'">';
+		}
+
+	?>
+		<dialog id="dialog_bienvenida">
+			<h2>Bienvenido/a 	<?php   echo '  '.$_SESSION['nombre_usuario']; ?>  </h2>
+
+			<span>Recibiste:
+				<?php
+					include_once('../cifradocesar/clases/Mensaje.class.php');
+					$mensaje_obj = new Mensaje();
+					$elemento = $mensaje_obj->obtengo_mensajes_recibidos_desde_ultima_vez($_SESSION['id_usuario_actual']);
+					echo $elemento->cuenta." mensajes desde la ultima vez.";
+
+					include_once('../cifradocesar/clases/Usuario.class.php');
+					$usuario_obj = new Usuario();
+					$res = $usuario_obj->consultar_ultima_fecha_hora();
+					echo '<br>Ultima fecha de acceso: '.$res;
+				?>
+			</span>
+			<br><br>
+			<button id="id_btn_cerrar_bienvenida">OK</button>
+
+		</dialog>
+
+
+
 	<span id="id_usuario" hidden> 
 		<?php  echo $_SESSION['id_usuario_actual'];  ?>
 	</span>
+
 
 	<section id="seccion_cabecera">
 		<h2>¡¡Bienvenido/a  <?php  echo '  '.$_SESSION['nombre_usuario'];  ?> !! </h2>
@@ -90,18 +73,19 @@
 				include_once('../cifradocesar/clases/Usuario.class.php');
 				$usuario_obj = new Usuario();
 				$res = $usuario_obj->consultar_ultima_fecha_hora();
-				echo $res;
+				echo $res;  //muestra la ultima vez para corroborar que lo mostrado anteriormente (cantidad de mensajes recibidos desde la ultima vez) sea correcto, ademas queda bien.
 
-				$_SESSION['ult_fecha_acceso'] = $fecha_actual;
-
-				$usuario_obj->actualizo_ultima_fecha_acceso ($_SESSION['id_usuario_actual'], $_SESSION['ult_fecha_acceso']);
+				$usuario_obj->actualizo_ultima_fecha_acceso ($_SESSION['id_usuario_actual'], $fecha_actual);
 				?>
 			</span>  
 		</h3>
 	</section>
 
+
 	<section id="seccion_listados">
-				
+		
+		<!-- Contiene los mensajes recibidos, aquellos que tengan como destinatario al usuario actual -->		
+
 		<article>
 			<p>Aclaraci&oacuten: Los mensajes no le&iacutedos aparecen coloreados</p>
 			<p>Mensajes recibidos</p>
@@ -147,7 +131,8 @@
 			</table>
 
 		</article>
-		
+	
+		<!-- Contiene los mensajes enviados por el usuario actual -->	
 		<article>
 			<p>Listado de mensajes enviados</p>
 			<table id="tabla_enviados">
@@ -185,6 +170,9 @@
 
 	</section>
 	
+
+	<!-- Esta seccion muestra la informacion del mensaje seleccionado desde la tabla, dependiendo que boton toques, podes responder, consultar el mensaje previo o volver al listado anterior.   -->
+
 	<dialog id="dialog_mensaje">
 		<p>Asunto</p>
 		<label id="id_lbl_asunto"></label>
@@ -202,9 +190,12 @@
 		<input id="id_mensaje" hidden type="text">
 		<br>
 		<button id="id_btn_mostrar_mensaje" hidden>Mostrar Mensaje Anterior</button>
-		<button onclick="cerrar_y_limpiar_modal()">Cerrar</button>
-		<button id="id_btn_responder" onclick="mostrar_seccion_rta()" hidden>Responder</button>
-	
+		<button id="id_btn_cerrar_mensaje">Cerrar</button>
+		<button id="id_btn_responder" hidden>Responder</button>
+
+
+		<!-- Esta seccion esta dedicada a mostrar el mensaje previo a la respuesta
+		seria como el mensaje de tipo "pregunta" aunque como tal no lo sea.  --> 	
 		<div hidden id="id_div_msj_anterior">
 			<p>Asunto</p>
 			<label id="id_lbl_asunto_msj_ant"></label>
@@ -218,8 +209,14 @@
 			<p>Remitente:
 			<label id="id_lbl_remitente_msj_ant"></label>
 			</p>
-			<button onclick="ocultar_mensaje_previo()">Ocultar mensaje previo</button>
+			<button id="id_btn_ocultar_msj_previo">Ocultar mensaje previo</button>
 		</div>
+
+
+
+		<!-- Esta seccion esta dedicada a que el usuario pueda responder el mensaje
+		de todos los datos al usuario solo se le solicita llenar el campo 
+		"mensaje", debido a que los demas se toman del mensaje actual.  -->
 
 		<div hidden id="id_div_rta">
 			<form id="formulario_respuesta" method="post" action="./php/enviar_mensaje.php">
@@ -246,7 +243,7 @@
 
 				<input name="desplazamiento" id="id_desplazamiento" hidden>
 					
-				<button onclick="ocultar_seccion()" type="button">Ocultar</button>
+				<button id="id_btn_ocultar_seccion_respuesta" type="button">Ocultar</button>
 				<button id="btn_enviar_respuesta">Enviar</button>
 
 			</form>

@@ -1,6 +1,9 @@
 import {cifrar, descifrar} from './cifrado_cesar.js';
 
 document.addEventListener('DOMContentLoaded', ()=> {
+
+	//esta porcion de codigo sirve para detectar que fila del listado se clickeo, para mostrar
+	//el mensaje descifrado, independientemente de la tabla en la que se encuentre
 	let nodos_fila = document.querySelectorAll('tr')
 	nodos_fila.forEach(fila => {
 		fila.addEventListener('click', function(e){
@@ -11,8 +14,63 @@ document.addEventListener('DOMContentLoaded', ()=> {
 		})
 
 	})
-	let dialog_bienvenida = document.getElementById("dialog_bienvenida")
-	dialog_bienvenida.showModal()
+	//termina porcion de codigo
+
+
+	//seccion dedicada a la apertura y cierre del dialog bienvenida, utilizado como 
+	//ventana emergente luego de iniciar sesion.
+	let muestro_dialog_bienvenida = document.getElementById("id_muestro_bienvenida")
+	let valor_muestro_bienvenida = muestro_dialog_bienvenida.getAttribute('value')
+
+	var dialog_bienvenida = document.getElementById("dialog_bienvenida")
+	
+	if (valor_muestro_bienvenida == 'verdadero') {
+		dialog_bienvenida.showModal()
+	}
+
+	let btn_cerrar_bienvenida = document.getElementById("id_btn_cerrar_bienvenida")
+	btn_cerrar_bienvenida.addEventListener('click', () => {
+		dialog_bienvenida.close()
+	})
+
+	//termina seccion dedicada a la apertura y cierre del dialog bienvenida
+
+
+	let btn_cerrar_en_dialog = document.getElementById("id_btn_cerrar_mensaje")
+	btn_cerrar_en_dialog.addEventListener('click', () => {
+		let lbl_asunto = document.getElementById("id_lbl_asunto")
+		let lbl_mensaje = document.getElementById("id_lbl_mensaje")
+		let lbl_fecha = document.getElementById("id_lbl_fecha")
+		let lbl_remitente = document.getElementById("id_lbl_remitente")
+		let div_oculto_mensaje_previo = document.getElementById("id_div_msj_anterior") 	
+		
+		lbl_asunto.innerHTML = ''
+		lbl_mensaje.innerHTML = ''
+		lbl_fecha.innerHTML = ''
+		lbl_remitente.innerHTML = ''
+		div_oculto_mensaje_previo.hidden = true
+	
+		let dialog = document.getElementById('dialog_mensaje')
+		dialog.close()
+	})
+
+
+	//SECCION RESPUESTA      SE HABILITA LA SECCION Y LUEGO SE DESHABILITA
+	let div_seccion_respuesta = document.getElementById("id_div_rta")
+	
+
+	let btn_responder_en_dialog_mensaje = document.getElementById("id_btn_responder")
+	btn_responder_en_dialog_mensaje.addEventListener('click', () => {
+		div_seccion_respuesta.hidden = false
+	})
+
+
+	let btn_ocultar_seccion_respuesta = document.getElementById("id_btn_ocultar_seccion_respuesta")
+	btn_ocultar_seccion_respuesta.addEventListener('click', () => {
+		div_seccion_respuesta.hidden = true
+	})
+
+
 
 	let btn_enviar = document.getElementById("btn_enviar_respuesta")
 	btn_enviar.addEventListener('click', (e)=> {
@@ -39,6 +97,10 @@ document.addEventListener('DOMContentLoaded', ()=> {
 			input_mensaje.focus()
 		}
 	})
+
+
+
+	//SECCION MENSAJE PREVIO, SE ENCUENTRA LA FUNCIONALIDAD DE MOSTRAR LA SECCION Y DE OCULTARLA
 
 	let btn_mostrar_mensaje_previo = document.getElementById("id_btn_mostrar_mensaje")
 	
@@ -83,6 +145,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
 			}
 		}
 	})
+
+	let btn_ocultar_mensaje_previo = document.getElementById("id_btn_ocultar_msj_previo")
+	btn_ocultar_mensaje_previo.addEventListener('click', () => {
+		let div_oculto_mensaje_previo = document.getElementById("id_div_msj_anterior") 	
+		div_oculto_mensaje_previo.hidden = true
+	})
+
 })
 
 
@@ -138,6 +207,7 @@ function mostrar_mensaje_descifrado (id_mensaje, clase_fila){
 			
 			btn_mostrar_mensaje_previo.hidden = resultado.existe_msj_previo ? false : true
 
+
 			if (resultado.leido == 0 && resultado.tipo_fila != "enviados") {
 				
 				btn_responder.hidden = false
@@ -153,6 +223,7 @@ function mostrar_mensaje_descifrado (id_mensaje, clase_fila){
 			} else {
 				btn_responder.hidden = true
 			}			
+
 			let dialog = document.getElementById('dialog_mensaje')
 			dialog.showModal()
 		}

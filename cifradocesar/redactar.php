@@ -1,4 +1,7 @@
 <?php
+
+	//esto se encuentra en la mayoria de paginas para evitar que usuarios no registrados ingresen al sistema, en caso de que no se detecte una sección, te redirige al login (o Iniciar Sesion)
+
 	session_start();
 	if (!isset($_SESSION['nombre_usuario']) ) {
 		header('location: login.php');
@@ -23,6 +26,9 @@
 			<h1>Redactar Mensaje</h1>
 		</section>
 
+
+		<!-- Esta seccion esta dedicada a redactar un mensaje, todos los campos se completan y/o seleccionan, segun corresponda, para luego poder ver cómo se almacenara el mensaje cifrado con el cifrado cesar y desplazamiento seleccionado -->
+		
 		<section>
 			<h3>Asunto</h3>
 			<input id="inp_texto_asunto" type="text" placeholder="ingrese un texto" maxlength="20" required>
@@ -57,6 +63,9 @@
 			
 			<button id="id_btn_enviar">Enviar Mensaje</button><br>
 		</section>
+
+
+		<!-- Esta seccion muestra el asunto y contenido del mensaje cifrados, solo espera que el usuario confirme los datos para guardarlos en la base de datos -->
 
 		<section id="seccion_rta">
 			<dialog id="dialog_rta">
