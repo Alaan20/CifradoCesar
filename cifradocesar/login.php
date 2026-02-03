@@ -35,8 +35,7 @@
 	?>
 	<section>
 		
-		<h2>Iniciar Sesi&oacuten</h2>
-
+		<h1>Iniciar Sesi&oacuten</h1>
 		<form method="post" action="login.php">
 		
 			<p>Usuario</p>

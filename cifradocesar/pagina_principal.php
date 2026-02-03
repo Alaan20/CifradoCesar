@@ -79,6 +79,7 @@
 				?>
 			</span>  
 		</h3>
+		<p class="aclaracion_no_leidos">Aclaraci&oacuten: Los mensajes no le&iacutedos aparecer&aacuten coloreados.</p>
 	</section>
 
 
@@ -87,8 +88,7 @@
 		<!-- Contiene los mensajes recibidos, aquellos que tengan como destinatario al usuario actual -->		
 
 		<article>
-			<p>Aclaraci&oacuten: Los mensajes no le&iacutedos aparecen coloreados</p>
-			<p>Mensajes recibidos</p>
+			<p>Listado de mensajes recibidos.</p>
 			<table id="tabla_recibidos">
 				
 				<thead>
@@ -134,7 +134,7 @@
 	
 		<!-- Contiene los mensajes enviados por el usuario actual -->	
 		<article>
-			<p>Listado de mensajes enviados</p>
+			<p>Listado de mensajes enviados.</p>
 			<table id="tabla_enviados">
 				
 				<thead>

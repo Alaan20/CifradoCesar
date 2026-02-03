@@ -19,7 +19,7 @@ class Mensaje {
 
 	function insertar_en_tabla_respuesta ($id_mensaje_principal) {
 		$ultimo_id = $this->conexion->insert_id;
-		$sql_insertar_respuesta = "INSERT INTO respuestas (id_mensaje_original, id_mensaje_respuesta, nro_respuesta) VALUES (".$id_mensaje_principal.",".$ultimo_id.", 1)";
+		$sql_insertar_respuesta = "INSERT INTO respuestas (id_mensaje_original, id_mensaje_respuesta) VALUES (".$id_mensaje_principal.",".$ultimo_id.")";
 
 		$this->conexion->query($sql_insertar_respuesta) or die("Error al insertar en la tabla respuestas");
 	}
