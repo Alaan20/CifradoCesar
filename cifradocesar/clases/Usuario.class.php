@@ -8,7 +8,7 @@ class Usuario {
 	}
 
 	function consultar_ultima_fecha_hora (){
-		$sql_consulto = "SELECT ultima_fecha_hora_acceso as ultima FROM usuarios where id_usuario = ".$_SESSION['id_usuario_actual'];
+		$sql_consulto = "SELECT COALESCE(ultima_fecha_hora_acceso, 'nulo') as ultima FROM usuarios where id_usuario = ".$_SESSION['id_usuario_actual'];
 		$respuesta = $this->conexion->query($sql_consulto) or die("fallo al actualizar ultima hora acceso");
 		$obj = $respuesta->fetch_object();
 		return $obj->ultima;
@@ -22,19 +22,20 @@ class Usuario {
 	function insertar_usuario_en_bd ($nombre, $apellido, $correo, $nombre_usuario, $contrasenia) {
 
 		$sql_insertar_usuario = "INSERT INTO usuarios (nombre, apellido, correo, nombre_usuario, contrasenia) VALUES ('".$nombre."','".$apellido."', '".$correo."','".$nombre_usuario."','".$contrasenia."')";
-
-		$bool_usuario_insertado = $this->conexion->query($sql_insertar_usuario) or die("Error al realizar la consulta");
-
+		
 		$obj = new StdClass();
-
-		if ($bool_usuario_insertado) {
+		
+		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+		
+		try {
+			$bool_usuario_insertado = $this->conexion->query($sql_insertar_usuario) or die("Error al realizar la consulta");
 			$obj->insertado = 'true';
-		} else {
-			$obj->insertado = 'false';
+		} catch (\mysqli_sql_exception $e){
+			if ($e->getCode() == 1062) {
+				$obj->insertado = 'false';
+			}
 		}
-
 		$this->conexion->close();
-		$bool_usuario_insertado->free();
 		return $obj;
 	}
 

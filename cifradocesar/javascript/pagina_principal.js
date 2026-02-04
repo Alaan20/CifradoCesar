@@ -182,7 +182,6 @@ function mostrar_mensaje_descifrado (id_mensaje, clase_fila){
 
 			lbl_asunto.innerHTML = descifrar(asunto,rem_asunto,resultado.desplazamiento) 
 			lbl_mensaje.innerHTML = descifrar(contenido,rem_contenido,resultado.desplazamiento)
-			lbl_fecha.innerHTML = resultado.fecha
 			lbl_remitente.innerHTML = resultado.remitente
 
 			let campo_rem = document.getElementById("opc_destinatario")
@@ -208,20 +207,35 @@ function mostrar_mensaje_descifrado (id_mensaje, clase_fila){
 			btn_mostrar_mensaje_previo.hidden = resultado.existe_msj_previo ? false : true
 
 
+			let span_fecha = document.getElementById("span_fecha")
 			if (resultado.leido == 0 && resultado.tipo_fila != "enviados") {
-				
+				//mensaje no fue leido y esta en la tabla recibidos
 				btn_responder.hidden = false
+				span_fecha.setAttribute('value','recepci&oacuten')
+				lbl_fecha.innerHTML = resultado.fecha_recepcion
 
-			} else if (resultado.tipo_fila != "enviados") {
+			} else if (resultado.tipo_fila != "enviados") {//mensaje fue leido y esta en la tabla recibidos
 				
-				btn_responder.hidden = false
+				if (resultado.existe_respuesta_a_msj == 'true') {
+					btn_responder.hidden = true	
+				} else {
+					btn_responder.hidden = false
+				}
+
+				span_fecha.setAttribute('value','recepci&oacuten')
+				lbl_fecha.innerHTML = resultado.fecha_recepcion
+				
 				fila.setAttribute('class','leido')
 				arreglo_hijos.forEach((hijo)=>{
 					hijo.innerHTML!= undefined ? hijo.setAttribute('class','leido'): null	
 				})
 
-			} else {
+				lbl_fecha.innerHTML = resultado.fecha_recepcion
+
+			} else {//mensaje esta en la tabla enviados, no importa si fue leido o no
+				span_fecha.setAttribute('value','env&iacuteo')
 				btn_responder.hidden = true
+				lbl_fecha.innerHTML = resultado.fecha_envio
 			}			
 
 			let dialog = document.getElementById('dialog_mensaje')

@@ -16,10 +16,12 @@ function valido_registro() {
 		if ( (obj_conexion.readyState == 4) && (obj_conexion.status == 200) ) {
 
 			resultado = JSON.parse(obj_conexion.responseText)
+			
 			if (resultado.insertado == 'false'){
-				alert("el nombre de usuario ingresado ya existe en la bd")
+				alert("El nombre de usuario ingresado ya existe en la bd. Pruebe con otro.")
 			} else {
-				alert("usuario agregado exitosamente")
+				alert("Usuario agregado exitosamente. Redirigiendo al login...")
+				window.location.assign("./login.php")
 			}
 		}
 	}

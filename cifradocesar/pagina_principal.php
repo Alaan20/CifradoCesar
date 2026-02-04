@@ -34,17 +34,23 @@
 		<dialog id="dialog_bienvenida">
 			<h2>Bienvenido/a 	<?php   echo '  '.$_SESSION['nombre_usuario']; ?>  </h2>
 
-			<span>Recibiste:
+			<span>
 				<?php
 					include_once('../cifradocesar/clases/Mensaje.class.php');
 					$mensaje_obj = new Mensaje();
 					$elemento = $mensaje_obj->obtengo_mensajes_recibidos_desde_ultima_vez($_SESSION['id_usuario_actual']);
-					echo $elemento->cuenta." mensajes desde la ultima vez.";
 
 					include_once('../cifradocesar/clases/Usuario.class.php');
 					$usuario_obj = new Usuario();
 					$res = $usuario_obj->consultar_ultima_fecha_hora();
-					echo '<br>Ultima fecha de acceso: '.$res;
+					
+					if ($res == 'nulo') {
+						echo 'Éste es su primer acceso. Disfrute del sistema!';			
+					} else {
+						echo "Recibiste:".$elemento->cuenta." mensajes desde la ultima vez.";
+						echo '<br>Ultima fecha de acceso: '.$res;
+					}
+
 				?>
 			</span>
 			<br><br>
@@ -61,24 +67,30 @@
 
 	<section id="seccion_cabecera">
 		<h2>¡¡Bienvenido/a  <?php  echo '  '.$_SESSION['nombre_usuario'];  ?> !! </h2>
+		 
 		
-		<h3> Su &uacuteltimo acceso fue el: 
-			<span id="span_ultimo_acceso">
-				<?php
-				date_default_timezone_set('America/Argentina/Buenos_Aires');
-				$arr_fecha = getdate();
+		<?php
+			date_default_timezone_set('America/Argentina/Buenos_Aires');
+			$arr_fecha = getdate();
+			$fecha_actual = ''.$arr_fecha['year'].'-'.$arr_fecha['mon'].'-'.$arr_fecha['mday'].' '.$arr_fecha['hours'].':'.$arr_fecha['minutes'].':'.$arr_fecha['seconds'];
 
-				$fecha_actual = ''.$arr_fecha['year'].'-'.$arr_fecha['mon'].'-'.$arr_fecha['mday'].' '.$arr_fecha['hours'].':'.$arr_fecha['minutes'].':'.$arr_fecha['seconds'];
+			include_once('../cifradocesar/clases/Usuario.class.php');
+			$usuario_obj = new Usuario();
+			$res = $usuario_obj->consultar_ultima_fecha_hora();
+			
+			if ($res == 'nulo') {
+				echo '<h3>Éste es su primer acceso. Disfrute del sistema!</h3>';			
+			} else {
+			
+				echo '<h3> Su &uacuteltimo acceso fue el: 
+				<span id="span_ultimo_acceso">'.$res.'</span> </h3>'; 
+				
+				//muestra la ultima vez para corroborar que lo mostrado anteriormente (cantidad de mensajes recibidos desde la ultima vez) sea correcto, ademas queda bien.
+			}
 
-				include_once('../cifradocesar/clases/Usuario.class.php');
-				$usuario_obj = new Usuario();
-				$res = $usuario_obj->consultar_ultima_fecha_hora();
-				echo $res;  //muestra la ultima vez para corroborar que lo mostrado anteriormente (cantidad de mensajes recibidos desde la ultima vez) sea correcto, ademas queda bien.
-
-				$usuario_obj->actualizo_ultima_fecha_acceso ($_SESSION['id_usuario_actual'], $fecha_actual);
-				?>
-			</span>  
-		</h3>
+			$usuario_obj->actualizo_ultima_fecha_acceso ($_SESSION['id_usuario_actual'], $fecha_actual);
+		?>
+	
 		<p class="aclaracion_no_leidos">Aclaraci&oacuten: Los mensajes no le&iacutedos aparecer&aacuten coloreados.</p>
 	</section>
 
@@ -107,22 +119,23 @@
 							$filas_a_insertar = '';
 							while ($mensaje = $coleccion_obj_consulta->fetch_object()) {
 								$filas_a_insertar .= "<tr value='".$mensaje->id_mensaje."' ";
+								$fecha = date_create($mensaje->fecha_recepcion);
 								if ($mensaje->leido == '0') {
 									$filas_a_insertar .= "class='no_leido'>
 											<td class='no_leido'>".$mensaje->asunto."</td>
 											<td class='no_leido'>".$mensaje->nombre_usuario."</td>
-											<td class='no_leido'>".$mensaje->fecha_envio."</td>";		
+											<td class='no_leido'>".date_format($fecha,'H:i:s d/m/y')."</td>";		
 								} else {
 									$filas_a_insertar .= "class='leido'>
 											<td class='leido'>".$mensaje->asunto."</td>
 											<td class='leido'>".$mensaje->nombre_usuario."</td>
-											<td class='leido'>".$mensaje->fecha_envio."</td>";
+											<td class='leido'>".date_format($fecha,'H:i:s d/m/y')."</td>";
 								}
 								$filas_a_insertar .= "</tr>";
 							}
 							echo $filas_a_insertar;
 						} else {
-							echo '<p>No recibiste ning&uacuten mensaje.</p>';
+							echo '<tr><td colspan="3">No recibiste ning&uacuten mensaje.</td></tr>';
 						}
 
 					?>
@@ -150,12 +163,16 @@
 						$coleccion_obj_consulta = $obj_mensaje->obtengo_listado_mensajes_enviados($_SESSION['id_usuario_actual']);
 						if ($coleccion_obj_consulta->num_rows>0) {
 							while ($mensaje = $coleccion_obj_consulta->fetch_object()) {
+								
+								$fecha = date_create($mensaje->fecha_envio);
 								echo "<tr class='enviados' value='".$mensaje->id_mensaje."'>
 										<td>".$mensaje->asunto."</td>
 										<td>".$mensaje->nombre_usuario."</td>
-										<td>".$mensaje->fecha_envio."</td>
+										<td>".date_format($fecha,'H:i:s d/m/y')."</td>
 									  </tr>";						
 							}
+						} else {
+							echo '<tr><td colspan="3">No enviaste ning&uacuten mensaje.</td></tr>';
 						}
 					?>
 				</tbody>
@@ -180,7 +197,7 @@
 		<p>Mensaje</p>
 		<label id="id_lbl_mensaje"></label>
 
-		<p>Fecha recepci&oacuten</p>
+		<p>Fecha <span id="span_fecha">recepci&oacuten</span></p>
 		<label id="id_lbl_fecha"></label>
 
 		<p>Remitente: 
