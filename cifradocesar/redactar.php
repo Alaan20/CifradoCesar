@@ -54,7 +54,7 @@
 			</select>
 		</p>
 		
-		<button id="id_btn_enviar">Enviar Mensaje</button><br>
+		<button id="id_btn_enviar">Enviar Mensaje</button><button id="id_btn_volver" type="button">Volver al Men&uacute</button><br>
 
 	</section>
 

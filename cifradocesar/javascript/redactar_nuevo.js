@@ -82,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 		
 	})
-	
 
 	let btn_cerrar = document.getElementById("id_btn_cerrar")
 	btn_cerrar.addEventListener('click', () => {
@@ -100,4 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	})
 
+	let btn_volver = document.getElementById("id_btn_volver")
+	btn_volver.addEventListener('click', ()=>{
+		window.location.assign('./menu_principal.php')
+	})
 })
