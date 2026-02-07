@@ -14,22 +14,35 @@ class Mensaje {
 		date_default_timezone_set('America/Argentina/Buenos_Aires');
 		$arr_fecha = getdate();
 
-		$minutos_modificados = rand(1,3) + $arr_fecha['minutes'];  //esto es para simular un delay entre los usuarios
+		$minutos_modificados = rand(1,2) + $arr_fecha['minutes'];  //esto es para simular un delay entre los usuarios
 
 		$fecha_recepcion_usuario = ''.$arr_fecha['year'].'-'.$arr_fecha['mon'].'-'.$arr_fecha['mday'].' '.$arr_fecha['hours'].':'.$minutos_modificados.':'.$arr_fecha['seconds'];
 		
 		$sql_insertar_mensaje = "INSERT INTO mensajes (asunto, contenido, remitente, destinatario, fecha_recepcion , desplazamiento, leido, reemplazo_asunto, reemplazo_mensaje) VALUES ('".$asunto_cif."','".$mensaje_cif."', ".$id_usuario_actual.",".$id_destinatario.", '".$fecha_recepcion_usuario."', ".$desplazamiento.", $leido, '".$asunto_r."','".$mensaje_r."')";
 
+		$this->conexion->query("Begin");
 		$bool_mensaje_insertado = $this->conexion->query($sql_insertar_mensaje) or die("Error al realizar la consulta");
-
-		return $bool_mensaje_insertado;
+		$id_ultimo_mensaje = $this->conexion->insert_id;
+		if ($bool_mensaje_insertado) {
+			$this->conexion->query("Commit");
+			return $id_ultimo_mensaje;
+		} else {
+			$this->conexion->query("Rollback");
+			return 0;
+		}
+		
 	}
 
-	function insertar_en_tabla_respuesta ($id_mensaje_principal) {
-		$ultimo_id = $this->conexion->insert_id;
-		$sql_insertar_respuesta = "INSERT INTO respuestas (id_mensaje_original, id_mensaje_respuesta) VALUES (".$id_mensaje_principal.",".$ultimo_id.")";
+	function insertar_en_tabla_respuesta ($id_mensaje_principal_ing, $id_mensaje_respuesta_ing) {
+		$sql_insertar_respuesta = "INSERT INTO respuestas (id_mensaje_original, id_mensaje_respuesta) VALUES (".$id_mensaje_principal_ing.",".$id_mensaje_respuesta_ing.")";
 
-		$this->conexion->query($sql_insertar_respuesta) or die("Error al insertar en la tabla respuestas");
+		$this->conexion->query("Begin");
+		$bool_insertado = $this->conexion->query($sql_insertar_respuesta) or die("Error al insertar en la tabla respuestas");
+		if ($bool_insertado) {
+			$this->conexion->query("Commit");
+		} else {
+			$this->conexion->query("Rollback");
+		}
 	}
 
 	function busco_mensaje_previo_con_id_respuesta ($id_respuesta) {
@@ -40,14 +53,19 @@ class Mensaje {
 			
 			$resultado = $this->conexion->query($sql_selecciono_msj_previo) or die("Error al realizar la consulta");
 
+
 			$mensaje = $resultado->fetch_object();
+
+			$fecha = date_create($mensaje->fecha_recepcion);
+			$fecha_formateada = date_format($fecha,'H:i:s d/m/y');
 			
 			$obj_a_devolver = new StdClass();
 			$obj_a_devolver->id_mensaje = $mensaje->id_mensaje;
 			$obj_a_devolver->asunto = $mensaje->asunto;
 			$obj_a_devolver->contenido = $mensaje->contenido;
 			$obj_a_devolver->remitente = $mensaje->remitente;
-			$obj_a_devolver->fecha = $mensaje->fecha_envio;
+			$obj_a_devolver->destinatario = $mensaje->destinatario;
+			$obj_a_devolver->fecha_recepcion = $fecha_formateada;
 			$obj_a_devolver->desplazamiento = $mensaje->desplazamiento;
 			$obj_a_devolver->reemplazo_asunto = $mensaje->reemplazo_asunto;
 			$obj_a_devolver->reemplazo_mensaje = $mensaje->reemplazo_mensaje;
@@ -66,14 +84,22 @@ class Mensaje {
 
 		if ($resultado->num_rows>0) {
 			$mensaje = $resultado->fetch_object();
+
+			$obj_date_fecha_envio = date_create($mensaje->fecha_envio);
+			$fecha_envio_formateada = date_format($obj_date_fecha_envio,'H:i:s d/m/y');
+			
+			$obj_date_fecha_recepcion = date_create($mensaje->fecha_recepcion);
+			$fecha_recepcion_formateada = date_format($obj_date_fecha_recepcion,'H:i:s d/m/y');
+
+
 			$obj_a_devolver = new StdClass();
 			$obj_a_devolver->id_mensaje = $mensaje->id_mensaje;
 			$obj_a_devolver->asunto = $mensaje->asunto;
 			$obj_a_devolver->contenido = $mensaje->contenido;
 			$obj_a_devolver->remitente = $mensaje->remitente;
 			$obj_a_devolver->destinatario = $mensaje->destinatario;
-			$obj_a_devolver->fecha_envio = $mensaje->fecha_envio;
-			$obj_a_devolver->fecha_recepcion = $mensaje->fecha_recepcion;
+			$obj_a_devolver->fecha_envio = $fecha_envio_formateada;
+			$obj_a_devolver->fecha_recepcion = $fecha_recepcion_formateada;
 			$obj_a_devolver->desplazamiento = $mensaje->desplazamiento;
 			$obj_a_devolver->leido = $mensaje->leido;
 			$obj_a_devolver->reemplazo_asunto = $mensaje->reemplazo_asunto;

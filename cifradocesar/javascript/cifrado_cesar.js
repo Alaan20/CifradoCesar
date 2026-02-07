@@ -46,55 +46,6 @@ export function cifrar (cadena_original, desplazamiento) {
 }
 
 
-export function cifrar_todo() {
-	//obtengo el label e input de la pagina, el label para mostrarle al usuario y el input para usarlo en $_get
-	let lbl_asunto_cif = document.getElementById("id_lbl_asunto_cif")
-	let inp_asunto_cif = document.getElementById("id_inp_asunto_cif")
-	
-
-	//obtengo el label e input de la pagina, el label para mostrarle al usuario y el input para usarlo en $_get
-	let inp_mensaje_cif = document.getElementById("id_inp_mensaje_cif")
-	let lbl_mensaje_cif = document.getElementById("id_lbl_mensaje_cif")
-
-	//obtengo el destinatario y lo escribo en el input ubicado dentro del form para usarlo en $_get
-	let destinatario = document.getElementById("id_h_destinatario")
-	let dest_seleccionado = document.getElementById("select_usuario").value
-	destinatario.setAttribute('value',dest_seleccionado)
-
-	//lo mismo que hice con el destinatario, pero ahora lo hago con el desplazamiento
-	let desplazamiento_obt = parseInt(document.getElementById("select_desplazamiento").value)
-	let span_des = document.getElementById("id_h_des")
-	span_des.setAttribute('value',desplazamiento_obt)
-
-	//asunto y mensaje sin encriptar, escritos por el usuario
-	let asunto_original = document.getElementById("inp_texto_asunto").value	
-	let mensaje_original = document.getElementById("inp_texto_mensaje").value
-
-	//obtengo un arreglo cuyos indices son: 0 y 1. el 0 contiene la cadena cifrada, y el 1 contiene las 
-	//posiciones con el correspondiente reemplazo
-	let arreglo_asunto_cif = cifrar(asunto_original, desplazamiento_obt)
-	let arreglo_mensaje_cif = cifrar(mensaje_original, desplazamiento_obt)
-
-	
-	let reemplazos_del_asunto_enc = document.getElementById("id_asunto_h")
-	let reemplazos_del_mensaje_enc = document.getElementById("id_h_mensaje")
-
-
-	reemplazos_del_asunto_enc.setAttribute('value',arreglo_asunto_cif[1])
-	inp_asunto_cif.setAttribute('value',arreglo_asunto_cif[0]) 
-	lbl_asunto_cif.innerHTML = arreglo_asunto_cif[0]
-	
-
-	reemplazos_del_mensaje_enc.setAttribute('value',arreglo_mensaje_cif[1])
-	inp_mensaje_cif.setAttribute('value',arreglo_mensaje_cif[0])
-	lbl_mensaje_cif.innerHTML = arreglo_mensaje_cif[0]
-
-
-	let dialog = document.getElementById("dialog_rta")
-	dialog.showModal()
-}
-
-
 export function descifrar (cadena, reemplazos, desplazamiento){
 	
 	let texto_resultante = ''

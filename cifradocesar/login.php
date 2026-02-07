@@ -23,7 +23,7 @@
 				$_SESSION['id_usuario_actual'] = $usuario->obtener_id_usuario($_POST['inp_nombre_usuario']);
 				$_SESSION['nombre_usuario'] = $_POST['inp_nombre_usuario'];
 				$_SESSION['muestro_bienvenida'] = 'verdadero';
-				header("location: pagina_principal.php");
+				header("location: menu_principal.php");
 			} else {
 				header("location: login.php");
 			}

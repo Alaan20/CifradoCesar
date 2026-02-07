@@ -1,0 +1,79 @@
+body {
+	text-align: center;
+	margin-left: 38%;
+	margin-right: 38%;
+	background-color: black;
+	margin-top: 6%;
+}
+
+#inp_texto_mensaje, #id_lbl_mensaje_cif {
+	color: black;
+	background-color: white;
+	text-align: left;
+	margin: auto;
+	width: 220px;
+	padding: 12px;
+	min-height: 40px;
+	max-height: 100px;
+	overflow-y: auto;
+	outline: none;
+	word-wrap: break-word;
+	white-space: pre-wrap;
+	border-radius: 15px;
+	word-break: break-all;
+}
+
+section {
+	color: white;
+	background-color: #0e0e0e;
+	border: solid #0084FF 1px;
+	border-radius: 30px;
+	padding-bottom: 10px;
+	width: 370px;
+}
+
+h1 {
+	border-bottom: solid white;
+	display: inline-block;
+}
+
+
+input {
+	border: black;
+	border-radius: 10px;
+	text-align: center;
+	font-size: 16px;
+	height: 25px;
+	transition: 0.5s;
+}
+
+input:hover {
+	border: solid #0084FF 3px;
+}
+
+
+button {
+	height: 40px;
+	width: 150px;
+	margin-top: 6px;
+	border-radius: 8px;
+	color: white;
+	border: #0084FF;
+	background-color: #0084FF;
+	transition: height 0.4s, width 0.4s;
+	font-size: 18px;
+}
+
+button:hover {
+	width: 140px;
+}
+
+#btn_dialog,#id_btn_cerrar {
+	margin-inline: 5px;
+	width: 45px;
+	transition: width 0.4s;
+}
+
+#btn_dialog:hover, #id_btn_cerrar:hover {
+	width: 50px;
+}

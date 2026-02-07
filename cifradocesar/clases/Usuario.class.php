@@ -73,6 +73,16 @@ class Usuario {
 		return false;
 	}
 
+	function get_nombre_usuario_por_id($id_usuario) {
+		$consulta = "SELECT nombre_usuario FROM usuarios WHERE 
+		id_usuario = ".$id_usuario;
+
+		$resultado = $this->conexion->query($consulta) or die("Error al realizar la consulta");
+		$resultado_obj_usuario = $resultado->fetch_object();
+		
+		return $resultado_obj_usuario->nombre_usuario;
+	}
+
 	function obtener_id_usuario ($nombre_usuario) {
 		$consulta = "SELECT id_usuario FROM usuarios WHERE nombre_usuario = '".$nombre_usuario."'";
 		$resultado = $this->conexion->query($consulta) or die("Error al obtener id usando el nombre de usuario");

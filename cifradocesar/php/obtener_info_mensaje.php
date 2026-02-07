@@ -1,5 +1,6 @@
 <?php
 	include_once('../clases/Mensaje.class.php');
+	include_once('../clases/Usuario.class.php');
 
 	$obj_mensaje = new Mensaje();
 
@@ -20,6 +21,9 @@
 			if ($exito_en_marcar_leido_en_bd) {	$obj_resultado_consulta->leido = '1'; }
 		}
 	}
-	
+	$obj_usuario = new Usuario();
+	$obj_resultado_consulta->nombre_usuario_remitente = $obj_usuario->get_nombre_usuario_por_id($obj_resultado_consulta->remitente);
+	$obj_resultado_consulta->nombre_usuario_destinatario = $obj_usuario->get_nombre_usuario_por_id($obj_resultado_consulta->destinatario);
+
 	echo json_encode($obj_resultado_consulta);
 ?>
